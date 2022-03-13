@@ -4,7 +4,7 @@ import Head from "next/head";
 import { MainLayout } from "../components/main-layout";
 
 import { HomeHero } from "../components/home/home-hero";
-
+import { MainNavbar } from "../components/main-navbar";
 import { gtm } from "../lib/gtm";
 
 const Home = () => {
@@ -18,6 +18,7 @@ const Home = () => {
         <title>SuperteamDAO</title>
       </Head>
       <main>
+        <MainNavbar />
         <HomeHero />
       </main>
     </>

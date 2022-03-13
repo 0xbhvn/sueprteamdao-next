@@ -1,25 +1,62 @@
 import React, { useState } from "react";
-import { SingleCollab } from "../../components/Collab/SingleCollab";
+// import { SingleCollab } from "../../components/Collab/SingleCollab";
 import {
   Typography,
-  Grid,
   Box,
   Button,
   Dialog,
-  Input,
   Autocomplete,
   TextField,
-  Stack,
+  Tab,
+  Tabs,
 } from "@mui/material";
+import PropTypes from "prop-types";
+
+import CardCollab from "../../components/Collab/Card";
 import axios from "axios";
+import { MainNavbar } from "../../components/main-navbar";
+import { OfferForm } from "../../components/Collab/OfferForm";
+
+function TabPanel(props) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box sx={{ p: 3 }}>
+          <Typography>{children}</Typography>
+        </Box>
+      )}
+    </div>
+  );
+}
+
+TabPanel.propTypes = {
+  children: PropTypes.node,
+  index: PropTypes.number.isRequired,
+  value: PropTypes.number.isRequired,
+};
+
+function a11yProps(index) {
+  return {
+    id: `simple-tab-${index}`,
+    "aria-controls": `simple-tabpanel-${index}`,
+  };
+}
+
 const Collab = () => {
   const [open, setOpen] = useState(false);
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [skills, setSkill] = useState("");
-  const [url, setUrl] = useState("");
-  const [ratio, setRatio] = useState("");
+  const [exist, setExist] = useState(false);
+  const [offer, setOffer] = useState(false);
+  const [value, setValue] = useState(0);
   const PostData = ({ title, description, skills, url, ratio }) => {
+    console.log("hello");
     axios.post("", {
       title,
       description,
@@ -28,13 +65,35 @@ const Collab = () => {
       ratio,
     });
   };
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
+  //////// main  ////////////
   const handleClickOpen = () => {
     setOpen(true);
   };
   const handleClose = () => {
     setOpen(false);
   };
-  const top100Films = [
+  //////// for exist ////////////
+  const handleExistOpen = () => {
+    setExist(true);
+    setOpen(false);
+  };
+  const handleExistClose = () => {
+    setExist(false);
+    setOpen(true);
+  };
+  //////// for offer ////////////
+  const handleOfferClose = () => {
+    setOffer(false);
+    setOpen(true);
+  };
+  const handleOfferOpen = () => {
+    setOffer(true);
+    setOpen(false);
+  };
+  const Skills = [
     { title: "Forrest Gump", year: 1994 },
     { title: "Inception", year: 2010 },
     {
@@ -49,6 +108,8 @@ const Collab = () => {
       title: "Star Wars: Episode IV - A New Hope",
       year: 1977,
     },
+  ];
+  const ExistOffer = [
     { title: "City of God", year: 2002 },
     { title: "Se7en", year: 1995 },
     { title: "The Silence of the Lambs", year: 1991 },
@@ -63,15 +124,16 @@ const Collab = () => {
   ];
   return (
     <>
+      <MainNavbar />
       <Typography
         sx={{
-          paddingTop: "2rem",
+          paddingTop: "5rem",
           display: "flex",
           justifyContent: "center",
-          fontSize: "4rem",
+          fontSize: "2rem",
         }}
       >
-        Find Collabrators
+        User Collab Profile
       </Typography>
       <Box
         sx={{
@@ -88,7 +150,7 @@ const Collab = () => {
           }}
           variant="outlined"
         >
-          Create A Offer
+          Invite
         </Button>
       </Box>
       <Dialog
@@ -98,82 +160,95 @@ const Collab = () => {
         aria-describedby="alert-dialog-description"
         sx={{ padding: "3rem" }}
       >
-        <Box>
-          <Input
-            sx={{ padding: "1rem" }}
-            type="text"
-            placeholder="Title"
-            onChange={(e) => setTitle(e.target.value)}
-          />
-          <Input
-            focused
-            sx={{ padding: "1rem" }}
-            type="text"
-            placeholder="Description"
-            onChange={(e) => setDescription(e.target.value)}
-          />
-        </Box>
-        <Box sx={{ display: "flex" }}>
-          <Stack
-            spacing={3}
-            sx={{ width: "100%", overflow: "hidden", padding: "1rem" }}
-          >
-            <Autocomplete
-              multiple
-              id="tags-standard"
-              options={top100Films}
-              getOptionLabel={(option) => option.title}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  variant="standard"
-                  label="Skills"
-                  placeholder="Skills"
-                  onChange={(e) => setSkill(e.target.value)}
-                />
-              )}
-            />
-          </Stack>
-          <Input
-            sx={{ padding: "1rem" }}
-            type="tel"
-            placeholder="Offered XP Ratio"
-            onChange={(e) => setRatio(e.target.value)}
-          />
-        </Box>
-        <Input
-          sx={{ padding: "1rem" }}
-          type="url"
-          placeholder="Enter Bounty ID"
-          onChange={(e) => setUrl(e.target.value)}
-        />
         <Box
           sx={{
-            height: "6rem",
+            width: "25rem",
+            height: "10rem",
             display: "flex",
-            justifyContent: "center",
+            justifyContent: "space-evenly",
             alignItems: "center",
           }}
         >
-          <Button
-            variant="outlined"
-            onClick={() => {
-              PostData(title, description, skills, url, ratio);
-            }}
-          >
-            Summit
+          <Button variant="contained" onClick={() => handleExistOpen()}>
+            Select your existing offer
+          </Button>
+          <Button variant="contained" onClick={() => handleOfferOpen()}>
+            Create New Offer
           </Button>
         </Box>
       </Dialog>
-      <Grid
-        sx={{ paddingTop: "4rem" }}
-        container
-        spacing={2}
-        gap={10}
-        justifyContent="center"
-        place-items="center"
+      {/* for exist  */}
+      <Dialog
+        open={exist}
+        onClose={handleExistClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
       >
-        {/* {arr.map(({ name, description }) => {
+        <Box
+          sx={{
+            width: "25rem",
+            height: "10rem",
+            display: "flex",
+            justifyContent: "center",
+          }}
+        >
+          <Autocomplete
+            sx={{ width: "20rem", paddingTop: "3rem" }}
+            id="tags-standard"
+            options={ExistOffer}
+            autoHighlight
+            getOptionLabel={(option) => option.title}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                variant="standard"
+                label="Exisiting Offer"
+                placeholder="Exisiting Offer"
+                // onChange={(e) => setSkills(e.target.value)}
+              />
+            )}
+          />
+        </Box>
+        <Button variant="contained">Submit</Button>
+      </Dialog>
+      <Dialog
+        open={offer}
+        onClose={handleOfferClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <OfferForm skills={Skills} />
+      </Dialog>
+      <Box sx={{ display: "flex", justifyContent: "center" }}>
+        {/* <CardCollab /> */}
+        <Box sx={{ width: "100%", paddingLeft: "3rem" }}>
+          <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+            <Tabs
+              value={value}
+              onChange={handleChange}
+              aria-label="basic tabs example"
+            >
+              <Tab label="Open offers" {...a11yProps(0)} />
+              <Tab label="Joined Collabs" {...a11yProps(1)} />
+            </Tabs>
+          </Box>
+          <TabPanel value={value} index={0}>
+            <CardCollab
+              Title="Title"
+              Description="Description"
+              Address="Address"
+            />
+          </TabPanel>
+          <TabPanel value={value} index={1}>
+            <CardCollab
+              Title="Title"
+              Description="Description"
+              Address="Address"
+            />
+          </TabPanel>
+        </Box>
+      </Box>
+      {/* {arr.map(({ name, description }) => {
         return (
           <>
             <div key={}>
@@ -188,14 +263,6 @@ const Collab = () => {
           </>
         );
       })} */}
-        <SingleCollab
-          name="bounty 1"
-          description="Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolorem,
-        fugiat eos saepe in quas nihil nesciunt, minus officia corporis
-        consequatur esse amet ad, odit quia eius aliquid laudantium consectetur
-        corrupti?"
-        />
-      </Grid>
     </>
   );
 };

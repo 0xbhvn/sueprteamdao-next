@@ -27,6 +27,7 @@ export const SingleCollab = ({ Name, description }) => {
     setOpen(false);
   };
   const PostData = ({ name, skills, preswin, value }) => {
+    console.log("helo");
     axios.post("", {
       name,
       skills,
@@ -65,22 +66,7 @@ export const SingleCollab = ({ Name, description }) => {
     <>
       <Card sx={{ maxWidth: 400 }}>
         <CardActionArea>
-          <CardContent>
-            <Typography
-              sx={{ display: "flex", justifyContent: "center" }}
-              gutterBottom
-              variant="h5"
-              component="div"
-            >
-              {Name}
-            </Typography>
-
-            <Typography variant="body2" color="text.secondary">
-              {description}
-            </Typography>
-            <Typography>Ratio of xp</Typography>
-            <Typography>Link</Typography>
-          </CardContent>
+          <CardContent></CardContent>
           <Box sx={{ padding: "2rem" }}>
             <Button
               onClick={() => {

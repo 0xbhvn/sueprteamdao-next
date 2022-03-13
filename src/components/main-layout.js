@@ -3,7 +3,8 @@ import { useRouter } from "next/router";
 import PropTypes from "prop-types";
 import { styled } from "@mui/material/styles";
 import { Box, Button, Typography } from "@mui/material";
-import { useMoralis } from "react-moralis";
+import { useMoralis, useMoralisQuery } from "react-moralis";
+
 const MainLayoutRoot = styled("div")(({ theme }) => ({
   backgroundColor: theme.palette.background.default,
   height: "100%",
@@ -12,6 +13,9 @@ const MainLayoutRoot = styled("div")(({ theme }) => ({
 
 export const MainLayout = ({ children }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  // const { data, error, isLoading } = useMoralisQuery("GameScore");
+  // const da = JSON.stringify(data, null, 2);
+  // console.log(da);
   const router = useRouter();
   const {
     isAuthenticated,
@@ -22,7 +26,7 @@ export const MainLayout = ({ children }) => {
     isLoggingOut,
   } = useMoralis();
   // const usrAddress = user;
-  console.log(user);
+  // console.log(user.id);
   const [isPhantom, setIsPhantom] = useState(false);
 
   const getProvider = () => {
@@ -51,7 +55,7 @@ export const MainLayout = ({ children }) => {
           paddingBottom: "3rem",
         }}
       >
-        SuperTeam DAO
+        Welcome to Collab Dashboard
       </Typography>
       {/* <Typography>{usrAddress}</Typography> */}
 
@@ -98,7 +102,7 @@ export const MainLayout = ({ children }) => {
         {isAuthenticated && (
           <Button
             onClick={() => {
-              router.push("/AllBounties/Bounty");
+              router.push("/Collab/Collab");
             }}
             size="medium"
             variant="outlined"
